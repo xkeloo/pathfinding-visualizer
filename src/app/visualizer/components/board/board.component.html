@@ -1,0 +1,12 @@
+<div (click)="run()" id="run-btn">BOARD</div>
+<table (mouseleave)="onMouseLeave()" (contextmenu)="contextMenuDisable($event)">
+    <tr *ngFor="let row of board.nodes; index as y;">
+        <td *ngFor="let node of row; index as x">
+            <div class="node" [@.disabled]="animationsDisabled"
+            [@nodeType]="node.type"
+            
+            (mousedown)="onMouseDown($event, node)" (mousemove)="onMouseMove($event, node)" (mouseup)="onMouseUp($event, node)">
+            </div>
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,27 @@
+table {
+    box-sizing: content-box;
+    border: 2px solid rgb(12, 26, 48);
+    border-collapse: collapse;
+}
+
+td {
+    padding: 0;
+    height: 3rem;
+    width: 3rem;
+    border: 1px solid rgb(17, 37, 68);
+    border-collapse: collapse;
+}
+
+.node {
+    height: 100%;
+    width: 100%;
+}
+
+#run {
+    color: white;
+    height: 6rem;
+    width: 3rem;
+    border:rgb(11, 29, 59);
+    border-radius: 5%;
+}
+
