@@ -3,9 +3,8 @@
 <head>
   <meta charset="utf-8">
   <title>PathfindingVisualizer</title>
-  <base href="">
+  <base href="/your_project_name/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
 <link rel="stylesheet" href="styles.css"></head>
 <body>
   <app-root></app-root>
