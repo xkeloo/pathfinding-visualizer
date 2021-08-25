@@ -1,13 +1,65 @@
+.bar {
+    margin: auto;
+    padding: 0.5rem 0;
+    max-width: 68rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-flow: row wrap;
+    color: #fff;
+    text-align: center;
+}
+
+.legend-element {
+    width: 10rem;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.legend-tile {
+    padding: 0;
+    width: 1.7rem;
+    height: 1.7rem;
+    border: 1px solid rgb(17, 37, 68);
+}
+
+.legend-tile-open {
+    background-color: rgb(200, 209, 223);
+}
+
+.legend-tile-wall {
+    background-color: rgb(25, 68, 133);
+}
+
+.legend-tile-initial {
+    background-color: rgb(13, 99, 25);
+}
+
+.legend-tile-destination {
+    background-color: rgb(150, 10, 10);
+}
+
+.legend-tile-checked {
+    background-color: rgb(138, 163, 204);
+}
+
+.legend-tile-path {
+    background-color: rgb(178, 224, 92);
+}
+
 table {
     box-sizing: content-box;
     border: 2px solid rgb(12, 26, 48);
     border-collapse: collapse;
+    margin: auto;
 }
 
 td {
     padding: 0;
-    height: 3rem;
-    width: 3rem;
+    width: 1.7rem;
+    height: 1.7rem;
     border: 1px solid rgb(17, 37, 68);
     border-collapse: collapse;
 }
@@ -15,13 +67,54 @@ td {
 .node {
     height: 100%;
     width: 100%;
+    cursor: pointer;
 }
 
-#run {
-    color: white;
-    height: 6rem;
-    width: 3rem;
-    border:rgb(11, 29, 59);
-    border-radius: 5%;
+.btn {
+    margin: 0 0.5rem;
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
+
+.btn:hover {
+    cursor: pointer;
+}
+
+.board-btn {
+    color: #fff;
+    background-color: hsl(211, 100%, 50%);
+    border-color: hsl(211, 100%, 50%);
+}
+
+.board-btn:hover {
+    color: #fff;
+    background-color: hsl(211, 100%, 43%);
+    border-color: hsl(211, 100%, 40%);
+}
+
+#run-btn {
+    color: #fff;
+    background-color: hsl(211, 100%, 25%);
+    border-color: hsl(211, 100%, 25%);
+}
+
+#run-btn:hover {
+    color: #fff;
+    background-color: hsl(211, 100%, 15%);
+    border-color: hsl(211, 100%, 18%);
+}
+
+.checkbox {
+    color: #fff;
+}
+
 

@@ -1,11 +1,11 @@
-import { animation, style, animate, trigger, transition, useAnimation, state } from '@angular/animations';
+import { style, animate, trigger, transition, state } from '@angular/animations';
 
 export const BoardAnimations = {
   nodeType: trigger('nodeType', [
     state('open', style({
         backgroundColor: 'rgb(200, 209, 223)'
     })),
-    state('visited', style({
+    state('checked', style({
         backgroundColor: 'rgb(138, 163, 204)'
     })),
     state('path', style({
@@ -27,10 +27,10 @@ export const BoardAnimations = {
     transition('destination <=> *', [
       animate(0)
     ]),
-    transition('open => visited', [
+    transition('open => checked', [
       animate(500)
     ]),
-    transition('visited => *', [
+    transition('checked => *', [
       animate(0)
     ]),
     transition('path=> *', [

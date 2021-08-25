@@ -1,5 +1,5 @@
-import { Board } from "../board";
-import { Node } from "../node";
+import { Board } from "../../board";
+import { Node } from "../../node";
 
 export class DijkstrasAlgorithm {
 
@@ -33,7 +33,7 @@ export class DijkstrasAlgorithm {
 
             added[nearestNodeIndex] = true;
             if (nearestNodeIndex != sourceIndex && nearestNodeIndex != targetIndex) {
-                nodes[nearestNodeIndex].type = 'visited';
+                nodes[nearestNodeIndex].type = 'checked';
             }
             if (nearestNodeIndex == targetIndex) {
                 DijkstrasAlgorithm.setPath(nodes, targetIndex, parents)

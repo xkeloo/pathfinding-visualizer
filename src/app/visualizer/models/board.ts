@@ -2,6 +2,7 @@ import { Node } from "./node";
 
 export class Board {
     nodes: Node[][] = [];
+    diagonalEdges: boolean = true;
     initialNodeCoords: {x: number, y:number};
     destinationNodeCoords: {x: number, y:number};
 
@@ -23,7 +24,7 @@ export class Board {
 
 
     }
-
+    
     getNode(x: number, y: number): Node {
         return this.nodes[y][x];
     }
@@ -34,6 +35,22 @@ export class Board {
             for (let x = 0; x < this.width; x++) 
                 list.push(this.nodes[y][x]);
         return list;
+    }
+
+    clearBoard(): void {
+        for (let y = 0; y < this.height; y++) 
+            for (let x = 0; x < this.width; x++)
+                this.nodes[y][x].type = 'open';
+
+        this.getInitalNode().type = 'initial';
+        this.getDestinationNode().type = 'destination';
+    }
+
+    clearPath(): void {
+        this.getNodeList().forEach(node => {
+            if(node.type == 'path' || node.type == 'checked')
+                node.type = 'open';
+        });
     }
 
     getInitalNode(): Node {
@@ -56,13 +73,6 @@ export class Board {
         this.getNode(x, y).type = 'destination';
     }
 
-    resetVisitedNodes(): void {
-        this.getNodeList().forEach(node => {
-            if(node.type == 'path' || node.type == 'visited')
-                node.type = 'open';
-        });
-    }
-
     getEdgeWeight(node1: Node, node2: Node): number {
         if (node1.type == 'wall' || node2.type == 'wall') return 0;
 
@@ -73,7 +83,8 @@ export class Board {
 
         if (deltaY == 0 && (deltaX == -1 || deltaX == 1)) return 1;
 
-        //if ((deltaX == -1 || deltaX == 1) && (deltaY == -1 || deltaY == 1)) return 1.4142;
+        //right now if there are walls placed diagonally crossing the potential path algorithm still will go through 
+        if (this.diagonalEdges && (deltaX == -1 || deltaX == 1) && (deltaY == -1 || deltaY == 1)) return 1.4142;
 
         return 0;
     }

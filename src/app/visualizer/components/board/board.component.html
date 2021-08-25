@@ -1,4 +1,21 @@
-<div (click)="run()" id="run-btn">BOARD</div>
+<div class="bar" id="nav-bar">
+    <div (click)="visualize()" class="btn board-btn" id="run-btn">Run Algorithm</div>
+    <div (click)="clearBoard()" class="btn board-btn">Clear Board</div>
+    <div (click)="clearPath()" class="btn board-btn">Clear Path</div>
+    <div class="checkbox">
+        <input type="checkbox" id="diagonal" name="diagonal" checked (click)="toggleDiagonalEdges()">
+        <label for="diagonal">Diagonal edges</label>
+    </div>
+</div>
+<div class="bar" id="legend-bar">
+    <div class="legend-element"><div class="legend-tile legend-tile-open"></div>Open</div>
+    <div class="legend-element"><div class="legend-tile legend-tile-wall"></div>Wall</div>
+    <div class="legend-element"><div class="legend-tile legend-tile-initial"></div>Initial</div>
+    <div class="legend-element"><div class="legend-tile legend-tile-destination"></div>Destination</div>
+    <div class="legend-element"><div class="legend-tile legend-tile-checked"></div>Checked</div>
+    <div class="legend-element"><div class="legend-tile legend-tile-path"></div>Path</div>
+</div>
+
 <table (mouseleave)="onMouseLeave()" (contextmenu)="contextMenuDisable($event)">
     <tr *ngFor="let row of board.nodes; index as y;">
         <td *ngFor="let node of row; index as x">
@@ -10,3 +27,8 @@
         </td>
     </tr>
 </table>
+
+<div class="bar">
+    Right mouse button - place wall : Left mouse button - clear wall <br>
+    Initial and Destination nodes can be moved using right mouse button
+</div>
