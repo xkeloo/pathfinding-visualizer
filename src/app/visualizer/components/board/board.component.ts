@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AStar } from '../../models/algorithms/pathfinding/AStar';
 import { DijkstrasAlgorithm } from '../../models/algorithms/pathfinding/dijkstrasAlghorithm';
 import { Board } from '../../models/board';
 import { Node } from '../../models/node';
@@ -14,6 +15,9 @@ import { BoardAnimations } from './board.animations';
 export class BoardComponent implements OnInit {
   board = new Board(40, 17);
 
+  algorithms: string[] = new Array("Dijsktra's algorithm", "A* algorithm");
+  activeAlgorithm: string = this.algorithms[0];
+  algorithmsListShowed: boolean = false; 
   dragActive: 'false' | 'initial' | 'destination' | 'clear' | 'block' = 'false';
   pathCalculated: boolean = false;
   animationsDisabled: boolean = false;
@@ -25,7 +29,7 @@ export class BoardComponent implements OnInit {
 
   visualize(): void {
     this.board.clearPath();
-    console.log(DijkstrasAlgorithm.calculatePath(this.board, this.board.getNodeList().indexOf(this.board.getInitalNode()), this.board.getNodeList().indexOf(this.board.getDestinationNode())));
+    console.log(AStar.calculatePath(this.board));
     this.pathCalculated = true;
     this.animationsDisabled = true;
   }
@@ -44,6 +48,22 @@ export class BoardComponent implements OnInit {
     this.board.diagonalEdges = !this.board.diagonalEdges;
     if(this.pathCalculated)
       this.visualize();
+  }
+
+  toggleAlgoritmsList() {
+    this.algorithmsListShowed = !this.algorithmsListShowed;
+  }
+
+  getNotActiveAlgorithms(): string[] {
+    let list: string[] = new Array();
+    for (let i = 0; i < this.algorithms.length; i++)
+      if (this.algorithms[i].localeCompare(this.activeAlgorithm) != 0)
+        list.push(this.algorithms[i]);
+      return list;
+  }
+  
+  setActiveAlgorithm(index: number) {
+    this.activeAlgorithm = this.algorithms[index];
   }
 
   contextMenuDisable(event: MouseEvent) {
@@ -74,32 +94,36 @@ export class BoardComponent implements OnInit {
       case 'false': break;
 
       case 'initial': 
-        if(node.type != 'destination' && node.type != 'wall') {
-          this.board.setInitialNode(node.x, node.y);
-          if (this.pathCalculated)
-            this.visualize();
+        if (node.type != 'destination' && node.type != 'wall') {
+          if (node.type != 'initial') {
+            this.board.setInitialNode(node.x, node.y);
+            if (this.pathCalculated)
+              this.visualize();
+          }
         }
         else
           this.dragActive = 'false';
         break;
 
       case 'destination':
-        if(node.type != 'initial' && node.type != 'wall') {
-          this.board.setDestinationNode(node.x, node.y);
-          if (this.pathCalculated)
-            this.visualize()
+        if (node.type != 'initial' && node.type != 'wall') {
+          if (node.type != 'destination') {
+            this.board.setDestinationNode(node.x, node.y);
+            if (this.pathCalculated)
+              this.visualize()
+          }
         }
         else
           this.dragActive = 'false';
         break;
 
       case 'block':
-        if(event.buttons == 1 && node.type == 'open')
+        if (event.buttons == 1 && node.type == 'open')
           node.setWall();
         break;
         
       case 'clear':
-        if(event.buttons == 2 && node.type == 'wall')
+        if (event.buttons == 2 && node.type == 'wall')
           node.clearWall();
         break;
     }

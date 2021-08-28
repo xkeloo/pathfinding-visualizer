@@ -5,14 +5,16 @@ export class DijkstrasAlgorithm {
 
     private static NO_PARENT: number = -1;
 
-    public static calculatePath(board: Board, sourceIndex: number, targetIndex: number): number { 
+    public static calculatePath(board: Board): number {
+        let sourceIndex = board.getNodeList().indexOf(board.getInitalNode());
+        let targetIndex = board.getNodeList().indexOf(board.getDestinationNode());
         let nodes = board.getNodeList();
         let shortestDistances: number[] = new Array(nodes.length);
-        let added: boolean[] = new Array(nodes.length);
+        let checked: boolean[] = new Array(nodes.length);
         
         for (let i = 0; i < nodes.length; i++) {
             shortestDistances[i] = Number.POSITIVE_INFINITY;
-            added[i] = false;
+            checked[i] = false;
         }
 
         shortestDistances[sourceIndex] = 0;
@@ -25,13 +27,13 @@ export class DijkstrasAlgorithm {
             let shortestDistance: number = Number.POSITIVE_INFINITY;
             
             for (let i = 0; i < nodes.length; i++) {
-                if(!added[i] && shortestDistances[i] < shortestDistance) {
+                if(!checked[i] && shortestDistances[i] < shortestDistance) {
                     shortestDistance = shortestDistances[i];
                     nearestNodeIndex = i;
                 }
             }
 
-            added[nearestNodeIndex] = true;
+            checked[nearestNodeIndex] = true;
             if (nearestNodeIndex != sourceIndex && nearestNodeIndex != targetIndex) {
                 nodes[nearestNodeIndex].type = 'checked';
             }
