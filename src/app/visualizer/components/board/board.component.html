@@ -1,5 +1,5 @@
 <div class="bar" id="nav-bar">
-    <div (click)="toggleAlgoritmsList()" class="btn board-btn alorithm-list-btn">{{activeAlgorithm}}
+    <div (click)="toggleAlgoritmsList()" class="btn board-btn alorithm-list-btn">{{algorithms[activeAlgorithm]}}
         <div class="algorithm-list" *ngIf="algorithmsListShowed">
             <div class="algorithm-list-item"(click)="setActiveAlgorithm(i)" *ngFor="let algorithm of algorithms; index as i">
                 {{algorithm}}

@@ -16,7 +16,7 @@ export class BoardComponent implements OnInit {
   board = new Board(40, 17);
 
   algorithms: string[] = new Array("Dijsktra's algorithm", "A* algorithm");
-  activeAlgorithm: string = this.algorithms[0];
+  activeAlgorithm: number = 0;
   algorithmsListShowed: boolean = false; 
   dragActive: 'false' | 'initial' | 'destination' | 'clear' | 'block' = 'false';
   pathCalculated: boolean = false;
@@ -29,7 +29,13 @@ export class BoardComponent implements OnInit {
 
   visualize(): void {
     this.board.clearPath();
-    console.log(AStar.calculatePath(this.board));
+    if (this.pathCalculated)
+      this.board.clearBoard();
+    switch(this.activeAlgorithm) {
+      case 0: DijkstrasAlgorithm.calculatePath(this.board); break;
+      case 1: AStar.calculatePath(this.board); break;
+      default: break;
+    }
     this.pathCalculated = true;
     this.animationsDisabled = true;
   }
@@ -53,17 +59,11 @@ export class BoardComponent implements OnInit {
   toggleAlgoritmsList() {
     this.algorithmsListShowed = !this.algorithmsListShowed;
   }
-
-  getNotActiveAlgorithms(): string[] {
-    let list: string[] = new Array();
-    for (let i = 0; i < this.algorithms.length; i++)
-      if (this.algorithms[i].localeCompare(this.activeAlgorithm) != 0)
-        list.push(this.algorithms[i]);
-      return list;
-  }
   
   setActiveAlgorithm(index: number) {
-    this.activeAlgorithm = this.algorithms[index];
+    this.activeAlgorithm = index;
+    if (this.pathCalculated)
+      this.visualize();
   }
 
   contextMenuDisable(event: MouseEvent) {
