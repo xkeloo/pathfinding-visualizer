@@ -30,7 +30,7 @@ export class BoardComponent implements OnInit {
   visualize(): void {
     this.board.clearPath();
     if (this.pathCalculated)
-      this.board.clearBoard();
+      this.board.clearPath();
     switch(this.activeAlgorithm) {
       case 0: DijkstrasAlgorithm.calculatePath(this.board); break;
       case 1: AStar.calculatePath(this.board); break;

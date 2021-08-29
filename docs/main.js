@@ -190,7 +190,7 @@ class BoardComponent {
     visualize() {
         this.board.clearPath();
         if (this.pathCalculated)
-            this.board.clearBoard();
+            this.board.clearPath();
         switch (this.activeAlgorithm) {
             case 0:
                 _models_algorithms_pathfinding_dijkstrasAlghorithm__WEBPACK_IMPORTED_MODULE_1__["DijkstrasAlgorithm"].calculatePath(this.board);
