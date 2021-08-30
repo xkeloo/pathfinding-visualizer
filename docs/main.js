@@ -70,7 +70,6 @@ class DijkstrasAlgorithm {
             shortestDistances[sourceIndex] = 0;
             let parents = new Array(nodes.length);
             parents[sourceIndex] = DijkstrasAlgorithm.NO_PARENT;
-            let promises = [];
             //async?
             for (let i = 0; i < nodes.length; i++) {
                 let nearestNodeIndex = -1;
@@ -83,12 +82,20 @@ class DijkstrasAlgorithm {
                 }
                 checked[nearestNodeIndex] = true;
                 if (nearestNodeIndex != sourceIndex && nearestNodeIndex != targetIndex) {
-                    promises.push(DijkstrasAlgorithm.checkNode(nodes[nearestNodeIndex], delay));
+                    if (delay == 0)
+                        nodes[nearestNodeIndex].type = 'checked';
+                    else
+                        yield DijkstrasAlgorithm.checkNode(nodes[nearestNodeIndex], delay);
                 }
                 if (nearestNodeIndex == targetIndex) {
-                    DijkstrasAlgorithm.setPath(nodes, targetIndex, parents, delay * 50);
-                    return Promise.all(promises).then((values) => console.log(shortestDistances[targetIndex]));
-                    // return new Promise(resolve => resolve(shortestDistances[targetIndex]));
+                    if (delay == 0) {
+                        DijkstrasAlgorithm.setPath(nodes, targetIndex, parents, delay);
+                        return new Promise(resolve => resolve(shortestDistances[targetIndex]));
+                    }
+                    else {
+                        yield DijkstrasAlgorithm.setPath(nodes, targetIndex, parents, delay * 8);
+                        return new Promise(resolve => resolve(shortestDistances[targetIndex]));
+                    }
                 }
                 for (let i = 0; i < nodes.length; i++) {
                     let edgeWeight = board.getEdgeWeight(nodes[nearestNodeIndex], nodes[i]);
@@ -98,7 +105,7 @@ class DijkstrasAlgorithm {
                     }
                 }
             }
-            return Promise.all(promises).then((values) => console.log(0));
+            return new Promise(resolve => resolve(0));
         });
     }
     static setPath(nodes, targetIndex, parents, delay) {
@@ -112,11 +119,18 @@ class DijkstrasAlgorithm {
             }
             list.pop();
             list = list.reverse();
-            list.forEach((element) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-                const result = yield _utility_UtilityFunctions__WEBPACK_IMPORTED_MODULE_1__["UtilityFunctions"].resolveWait(delay);
-                if (result == 'resolved')
-                    element.type = 'path';
-            }));
+            if (delay == 0) {
+                for (let i = 0; i < list.length; i++) {
+                    list[i].type = 'path';
+                }
+            }
+            else {
+                for (let i = 0; i < list.length; i++) {
+                    const result = yield _utility_UtilityFunctions__WEBPACK_IMPORTED_MODULE_1__["UtilityFunctions"].resolveWait(delay);
+                    if (result == 'resolved')
+                        list[i].type = 'path';
+                }
+            }
             return yield list;
         });
     }
@@ -210,13 +224,13 @@ class BoardComponent {
         this.calculating = false;
         this.pathCalculated = false;
         this.animationsDisabled = false;
+        this.algorithmDelay = 1;
     }
     ngOnInit() {
     }
     visualize(delay) {
         if (this.calculating)
             return;
-        this.board.clearPath();
         if (this.pathCalculated)
             this.board.clearPath();
         this.calculating = true;
@@ -234,37 +248,45 @@ class BoardComponent {
         }
         result.then(value => {
             this.calculating = false;
+            this.pathCalculated = true;
+            this.animationsDisabled = true;
             console.log(this.calculating);
         });
-        this.pathCalculated = true;
-        this.animationsDisabled = true;
     }
     clearBoard() {
+        if (this.calculating)
+            return;
         this.board.clearBoard();
         this.pathCalculated = false;
     }
     clearPath() {
+        if (this.calculating)
+            return;
         this.board.clearPath();
         this.pathCalculated = false;
     }
     toggleDiagonalEdges() {
         this.board.diagonalEdges = !this.board.diagonalEdges;
         if (this.pathCalculated)
-            this.visualize(5);
+            this.visualize(this.algorithmDelay);
     }
     toggleAlgoritmsList() {
+        if (this.calculating)
+            return;
         this.algorithmsListShowed = !this.algorithmsListShowed;
     }
     setActiveAlgorithm(index) {
         this.activeAlgorithm = index;
         if (this.pathCalculated)
-            this.visualize(5);
+            this.visualize(this.algorithmDelay);
     }
     contextMenuDisable(event) {
         event.preventDefault();
     }
     onMouseDown(event, node) {
         event.preventDefault();
+        if (this.calculating)
+            return;
         if (event.buttons == 1) {
             if (node.type == 'initial')
                 this.dragActive = 'initial';
@@ -282,6 +304,8 @@ class BoardComponent {
     }
     onMouseMove(event, node) {
         event.preventDefault();
+        if (this.calculating)
+            return;
         switch (this.dragActive) {
             case 'false': break;
             case 'initial':
@@ -335,7 +359,7 @@ BoardComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineCom
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](3, BoardComponent_div_3_Template, 2, 1, "div", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](4, "div", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function BoardComponent_Template_div_click_4_listener() { return ctx.visualize(5); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function BoardComponent_Template_div_click_4_listener() { return ctx.visualize(ctx.algorithmDelay); });
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](5, "Run Algorithm");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](6, "div", 4);
@@ -817,51 +841,61 @@ __webpack_require__.r(__webpack_exports__);
 
 class AStar {
     static calculatePath(board, delay) {
-        let sourceIndex = board.getNodeList().indexOf(board.getInitalNode());
-        let targetIndex = board.getNodeList().indexOf(board.getDestinationNode());
-        let nodes = board.getNodeList();
-        let openSet = new _utility_PriorityQueue__WEBPACK_IMPORTED_MODULE_1__["PriorityQueue"]();
-        let parents = new Array(nodes.length);
-        parents[sourceIndex] = AStar.NO_PARENT;
-        let gScore = new Array(nodes.length);
-        let fScore = new Array(nodes.length);
-        for (let i = 0; i < nodes.length; i++) {
-            gScore[i] = Number.POSITIVE_INFINITY;
-            fScore[i] = Number.POSITIVE_INFINITY;
-        }
-        gScore[sourceIndex] = 0;
-        fScore[sourceIndex] = AStar.calculateH(nodes[sourceIndex], nodes[targetIndex]);
-        openSet.add(sourceIndex, fScore[sourceIndex]);
-        let promises = [];
-        while (!openSet.isEmpty()) {
-            let current = openSet.dequeue();
-            if (current == targetIndex) {
-                this.setPath(nodes, targetIndex, parents, 50 * delay);
-                return Promise.all(promises).then((values) => console.log(fScore[current]));
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            let sourceIndex = board.getNodeList().indexOf(board.getInitalNode());
+            let targetIndex = board.getNodeList().indexOf(board.getDestinationNode());
+            let nodes = board.getNodeList();
+            let openSet = new _utility_PriorityQueue__WEBPACK_IMPORTED_MODULE_1__["PriorityQueue"]();
+            let parents = new Array(nodes.length);
+            parents[sourceIndex] = AStar.NO_PARENT;
+            let gScore = new Array(nodes.length);
+            let fScore = new Array(nodes.length);
+            for (let i = 0; i < nodes.length; i++) {
+                gScore[i] = Number.POSITIVE_INFINITY;
+                fScore[i] = Number.POSITIVE_INFINITY;
             }
-            nodes.forEach(node => {
-                let edgeWeight = board.getEdgeWeight(nodes[current], node);
-                if (edgeWeight != 0) {
-                    let neighbour = nodes.indexOf(node);
-                    let tentativeG = gScore[current] + edgeWeight;
-                    if (tentativeG < gScore[neighbour]) {
-                        parents[neighbour] = current;
-                        gScore[neighbour] = tentativeG;
-                        fScore[neighbour] = gScore[neighbour] + AStar.calculateH(nodes[neighbour], nodes[targetIndex]);
-                        if (!openSet.contains(neighbour)) {
-                            openSet.add(neighbour, fScore[neighbour]);
-                            if (nodes[neighbour].type != 'initial' && nodes[neighbour].type != 'destination')
-                                promises.push(AStar.checkNode(nodes[neighbour], delay));
-                        }
-                        else {
-                            openSet.remove(neighbour);
-                            openSet.add(neighbour, fScore[neighbour]);
-                        }
+            gScore[sourceIndex] = 0;
+            fScore[sourceIndex] = AStar.calculateH(nodes[sourceIndex], nodes[targetIndex]);
+            openSet.add(sourceIndex, fScore[sourceIndex]);
+            while (!openSet.isEmpty()) {
+                let current = openSet.dequeue();
+                if (current == targetIndex) {
+                    if (delay == 0) {
+                        AStar.setPath(nodes, targetIndex, parents, delay);
+                        return new Promise(resolve => resolve(fScore[current]));
+                    }
+                    else {
+                        yield AStar.setPath(nodes, targetIndex, parents, delay * 5);
+                        return new Promise(resolve => resolve(fScore[current]));
                     }
                 }
-            });
-        }
-        return Promise.all(promises).then((values) => console.log(0));
+                nodes.forEach((node) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+                    let edgeWeight = board.getEdgeWeight(nodes[current], node);
+                    if (edgeWeight != 0) {
+                        let neighbour = nodes.indexOf(node);
+                        let tentativeG = gScore[current] + edgeWeight;
+                        if (tentativeG < gScore[neighbour]) {
+                            parents[neighbour] = current;
+                            gScore[neighbour] = tentativeG;
+                            fScore[neighbour] = gScore[neighbour] + AStar.calculateH(nodes[neighbour], nodes[targetIndex]);
+                            if (!openSet.contains(neighbour)) {
+                                openSet.add(neighbour, fScore[neighbour]);
+                                if (nodes[neighbour].type != 'initial' && nodes[neighbour].type != 'destination')
+                                    if (delay == 0)
+                                        nodes[neighbour].type = 'checked';
+                                    else
+                                        yield AStar.checkNode(nodes[neighbour], delay);
+                            }
+                            else {
+                                openSet.remove(neighbour);
+                                openSet.add(neighbour, fScore[neighbour]);
+                            }
+                        }
+                    }
+                }));
+            }
+            return new Promise(resolve => resolve(0));
+        });
     }
     static calculateH(node1, node2) {
         return Math.sqrt(Math.pow((node1.x - node2.x), 2) + Math.pow((node1.y - node2.y), 2));
@@ -877,11 +911,18 @@ class AStar {
             }
             list.pop();
             list = list.reverse();
-            list.forEach((element) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
-                const result = yield _utility_UtilityFunctions__WEBPACK_IMPORTED_MODULE_2__["UtilityFunctions"].resolveWait(delay);
-                if (result == 'resolved')
-                    element.type = 'path';
-            }));
+            if (delay == 0) {
+                for (let i = 0; i < list.length; i++) {
+                    list[i].type = 'path';
+                }
+            }
+            else {
+                for (let i = 0; i < list.length; i++) {
+                    const result = yield _utility_UtilityFunctions__WEBPACK_IMPORTED_MODULE_2__["UtilityFunctions"].resolveWait(delay);
+                    if (result == 'resolved')
+                        list[i].type = 'path';
+                }
+            }
             return yield list;
         });
     }

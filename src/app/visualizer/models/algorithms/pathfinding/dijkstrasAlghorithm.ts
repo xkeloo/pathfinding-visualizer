@@ -24,7 +24,6 @@ export class DijkstrasAlgorithm {
         let parents: number[] = new Array(nodes.length);
         parents[sourceIndex] = DijkstrasAlgorithm.NO_PARENT;
         
-        let promises: Promise<any>[] = [];
         //async?
         for (let i = 0; i < nodes.length; i++) {
             let nearestNodeIndex: number = -1;
@@ -39,13 +38,21 @@ export class DijkstrasAlgorithm {
 
             checked[nearestNodeIndex] = true;
             if (nearestNodeIndex != sourceIndex && nearestNodeIndex != targetIndex) {
-                promises.push(DijkstrasAlgorithm.checkNode(nodes[nearestNodeIndex], delay));
+                if (delay == 0)
+                    nodes[nearestNodeIndex].type = 'checked'
+                else
+                    await DijkstrasAlgorithm.checkNode(nodes[nearestNodeIndex], delay);
             }
             if (nearestNodeIndex == targetIndex) {
-                DijkstrasAlgorithm.setPath(nodes, targetIndex, parents, delay*50)
-                return Promise.all(promises).then((values) => console.log(shortestDistances[targetIndex]));
-               // return new Promise(resolve => resolve(shortestDistances[targetIndex]));
-                
+                if (delay == 0) {
+                    DijkstrasAlgorithm.setPath(nodes, targetIndex, parents, delay);
+                    return  new Promise(resolve => resolve(shortestDistances[targetIndex]));
+                }
+                else 
+                {
+                    await DijkstrasAlgorithm.setPath(nodes, targetIndex, parents, delay*8);
+                    return new Promise(resolve => resolve(shortestDistances[targetIndex]));
+                }
             }
 
             for (let i = 0; i < nodes.length; i++) {
@@ -58,7 +65,7 @@ export class DijkstrasAlgorithm {
             }
         }
 
-         return Promise.all(promises).then((values) => console.log(0));
+        return new Promise(resolve => resolve(0));
     }
 
     private static async setPath(nodes: Node[], targetIndex: number, parents: number[], delay: number): Promise<Node[]> {
@@ -72,11 +79,19 @@ export class DijkstrasAlgorithm {
 
         list.pop();
         list = list.reverse();
-        list.forEach(async element => {
+        if (delay == 0) {
+            for (let i = 0; i < list.length; i++) {
+                list[i].type = 'path';
+            }
+        }
+        else {
+            for (let i = 0; i < list.length; i++) {
                 const result = await UtilityFunctions.resolveWait(delay);
                 if (result == 'resolved')
-                    element.type = 'path';
-        });
+                    list[i].type = 'path';
+            }
+        }
+
         return await list;
     }
 

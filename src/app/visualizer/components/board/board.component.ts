@@ -22,6 +22,7 @@ export class BoardComponent implements OnInit {
   calculating: boolean = false;
   pathCalculated: boolean = false;
   animationsDisabled: boolean = false;
+  algorithmDelay: number = 1;
 
   constructor() { }
 
@@ -30,13 +31,13 @@ export class BoardComponent implements OnInit {
 
   visualize(delay: number): void {
     if (this.calculating) return;
-    this.board.clearPath();
+    
     if (this.pathCalculated)
       this.board.clearPath();
     
     this.calculating = true;
+
     let result;
-    
     switch(this.activeAlgorithm) {
       case 0: result = DijkstrasAlgorithm.calculatePath(this.board, delay); break;
       case 1: result = AStar.calculatePath(this.board, delay); break;
@@ -44,18 +45,20 @@ export class BoardComponent implements OnInit {
     }
     result.then(value => {
       this.calculating = false
+      this.pathCalculated = true;
+      this.animationsDisabled = true;
       console.log(this.calculating)
     });
-    this.pathCalculated = true;
-    this.animationsDisabled = true;
   }
 
   clearBoard() {
+    if (this.calculating) return;
     this.board.clearBoard();
     this.pathCalculated = false;
   }
 
   clearPath() {
+    if (this.calculating) return;
     this.board.clearPath();
     this.pathCalculated = false;
   }
@@ -63,17 +66,18 @@ export class BoardComponent implements OnInit {
   toggleDiagonalEdges() {
     this.board.diagonalEdges = !this.board.diagonalEdges;
     if(this.pathCalculated)
-      this.visualize(5);
+      this.visualize(this.algorithmDelay);
   }
 
   toggleAlgoritmsList() {
+    if (this.calculating) return;
     this.algorithmsListShowed = !this.algorithmsListShowed;
   }
   
   setActiveAlgorithm(index: number) {
     this.activeAlgorithm = index;
     if (this.pathCalculated)
-      this.visualize(5);
+      this.visualize(this.algorithmDelay);
   }
 
   contextMenuDisable(event: MouseEvent) {
@@ -82,6 +86,7 @@ export class BoardComponent implements OnInit {
 
   onMouseDown(event: MouseEvent, node: Node) {
     event.preventDefault();
+    if (this.calculating) return;
     if(event.buttons == 1){
       if(node.type == 'initial')
         this.dragActive = 'initial'
@@ -100,6 +105,7 @@ export class BoardComponent implements OnInit {
 
   onMouseMove(event: MouseEvent, node: Node) {
     event.preventDefault();
+    if (this.calculating) return;
     switch(this.dragActive) {
       case 'false': break;
 
@@ -143,7 +149,6 @@ export class BoardComponent implements OnInit {
     event.preventDefault();
     if (this.dragActive != 'false'){
       this.dragActive = 'false'
-
     }
 
   }
