@@ -19,6 +19,7 @@ export class BoardComponent implements OnInit {
   activeAlgorithm: number = 0;
   algorithmsListShowed: boolean = false; 
   dragActive: 'false' | 'initial' | 'destination' | 'clear' | 'block' = 'false';
+  calculating: boolean = false;
   pathCalculated: boolean = false;
   animationsDisabled: boolean = false;
 
@@ -27,15 +28,24 @@ export class BoardComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  visualize(): void {
+  visualize(delay: number): void {
+    if (this.calculating) return;
     this.board.clearPath();
     if (this.pathCalculated)
       this.board.clearPath();
+    
+    this.calculating = true;
+    let result;
+    
     switch(this.activeAlgorithm) {
-      case 0: DijkstrasAlgorithm.calculatePath(this.board); break;
-      case 1: AStar.calculatePath(this.board); break;
-      default: break;
+      case 0: result = DijkstrasAlgorithm.calculatePath(this.board, delay); break;
+      case 1: result = AStar.calculatePath(this.board, delay); break;
+      default: result = new Promise(resolve => resolve('done')); break;
     }
+    result.then(value => {
+      this.calculating = false
+      console.log(this.calculating)
+    });
     this.pathCalculated = true;
     this.animationsDisabled = true;
   }
@@ -53,7 +63,7 @@ export class BoardComponent implements OnInit {
   toggleDiagonalEdges() {
     this.board.diagonalEdges = !this.board.diagonalEdges;
     if(this.pathCalculated)
-      this.visualize();
+      this.visualize(5);
   }
 
   toggleAlgoritmsList() {
@@ -63,7 +73,7 @@ export class BoardComponent implements OnInit {
   setActiveAlgorithm(index: number) {
     this.activeAlgorithm = index;
     if (this.pathCalculated)
-      this.visualize();
+      this.visualize(5);
   }
 
   contextMenuDisable(event: MouseEvent) {
@@ -98,7 +108,7 @@ export class BoardComponent implements OnInit {
           if (node.type != 'initial') {
             this.board.setInitialNode(node.x, node.y);
             if (this.pathCalculated)
-              this.visualize();
+              this.visualize(0);
           }
         }
         else
@@ -110,7 +120,7 @@ export class BoardComponent implements OnInit {
           if (node.type != 'destination') {
             this.board.setDestinationNode(node.x, node.y);
             if (this.pathCalculated)
-              this.visualize()
+              this.visualize(0)
           }
         }
         else

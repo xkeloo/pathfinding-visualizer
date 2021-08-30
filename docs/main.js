@@ -50,59 +50,84 @@ const environment = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DijkstrasAlgorithm", function() { return DijkstrasAlgorithm; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _utility_UtilityFunctions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utility/UtilityFunctions */ "JKcU");
+
+
 class DijkstrasAlgorithm {
-    static calculatePath(board) {
-        let sourceIndex = board.getNodeList().indexOf(board.getInitalNode());
-        let targetIndex = board.getNodeList().indexOf(board.getDestinationNode());
-        let nodes = board.getNodeList();
-        let shortestDistances = new Array(nodes.length);
-        let checked = new Array(nodes.length);
-        for (let i = 0; i < nodes.length; i++) {
-            shortestDistances[i] = Number.POSITIVE_INFINITY;
-            checked[i] = false;
-        }
-        shortestDistances[sourceIndex] = 0;
-        let parents = new Array(nodes.length);
-        parents[sourceIndex] = DijkstrasAlgorithm.NO_PARENT;
-        for (let i = 0; i < nodes.length; i++) {
-            let nearestNodeIndex = -1;
-            let shortestDistance = Number.POSITIVE_INFINITY;
+    static calculatePath(board, delay) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            //constructor
+            let sourceIndex = board.getNodeList().indexOf(board.getInitalNode());
+            let targetIndex = board.getNodeList().indexOf(board.getDestinationNode());
+            let nodes = board.getNodeList();
+            let shortestDistances = new Array(nodes.length);
+            let checked = new Array(nodes.length);
             for (let i = 0; i < nodes.length; i++) {
-                if (!checked[i] && shortestDistances[i] < shortestDistance) {
-                    shortestDistance = shortestDistances[i];
-                    nearestNodeIndex = i;
+                shortestDistances[i] = Number.POSITIVE_INFINITY;
+                checked[i] = false;
+            }
+            shortestDistances[sourceIndex] = 0;
+            let parents = new Array(nodes.length);
+            parents[sourceIndex] = DijkstrasAlgorithm.NO_PARENT;
+            let promises = [];
+            //async?
+            for (let i = 0; i < nodes.length; i++) {
+                let nearestNodeIndex = -1;
+                let shortestDistance = Number.POSITIVE_INFINITY;
+                for (let i = 0; i < nodes.length; i++) {
+                    if (!checked[i] && shortestDistances[i] < shortestDistance) {
+                        shortestDistance = shortestDistances[i];
+                        nearestNodeIndex = i;
+                    }
+                }
+                checked[nearestNodeIndex] = true;
+                if (nearestNodeIndex != sourceIndex && nearestNodeIndex != targetIndex) {
+                    promises.push(DijkstrasAlgorithm.checkNode(nodes[nearestNodeIndex], delay));
+                }
+                if (nearestNodeIndex == targetIndex) {
+                    DijkstrasAlgorithm.setPath(nodes, targetIndex, parents, delay * 50);
+                    return Promise.all(promises).then((values) => console.log(shortestDistances[targetIndex]));
+                    // return new Promise(resolve => resolve(shortestDistances[targetIndex]));
+                }
+                for (let i = 0; i < nodes.length; i++) {
+                    let edgeWeight = board.getEdgeWeight(nodes[nearestNodeIndex], nodes[i]);
+                    if (edgeWeight > 0 && ((shortestDistance + edgeWeight) < shortestDistances[i])) {
+                        parents[i] = nearestNodeIndex;
+                        shortestDistances[i] = shortestDistance + edgeWeight;
+                    }
                 }
             }
-            checked[nearestNodeIndex] = true;
-            if (nearestNodeIndex != sourceIndex && nearestNodeIndex != targetIndex) {
-                nodes[nearestNodeIndex].type = 'checked';
-            }
-            if (nearestNodeIndex == targetIndex) {
-                DijkstrasAlgorithm.setPath(nodes, targetIndex, parents);
-                return shortestDistances[targetIndex];
-            }
-            for (let i = 0; i < nodes.length; i++) {
-                let edgeWeight = board.getEdgeWeight(nodes[nearestNodeIndex], nodes[i]);
-                if (edgeWeight > 0 && ((shortestDistance + edgeWeight) < shortestDistances[i])) {
-                    parents[i] = nearestNodeIndex;
-                    shortestDistances[i] = shortestDistance + edgeWeight;
-                }
-            }
-        }
-        return 0;
+            return Promise.all(promises).then((values) => console.log(0));
+        });
     }
-    static setPath(nodes, targetIndex, parents) {
-        let list = new Array();
-        let newIndex = targetIndex;
-        while (parents[newIndex] != DijkstrasAlgorithm.NO_PARENT) {
-            let node = nodes[parents[newIndex]];
-            list.push(node);
-            newIndex = parents[newIndex];
-        }
-        list.pop();
-        list = list.reverse();
-        list.forEach(element => {
-            element.type = 'path';
+    static setPath(nodes, targetIndex, parents, delay) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            let list = new Array();
+            let newIndex = targetIndex;
+            while (parents[newIndex] != DijkstrasAlgorithm.NO_PARENT) {
+                let node = nodes[parents[newIndex]];
+                list.push(node);
+                newIndex = parents[newIndex];
+            }
+            list.pop();
+            list = list.reverse();
+            list.forEach((element) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+                const result = yield _utility_UtilityFunctions__WEBPACK_IMPORTED_MODULE_1__["UtilityFunctions"].resolveWait(delay);
+                if (result == 'resolved')
+                    element.type = 'path';
+            }));
+            return yield list;
+        });
+    }
+    static checkNode(node, delay) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            return new Promise((resolve) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+                const result = yield _utility_UtilityFunctions__WEBPACK_IMPORTED_MODULE_1__["UtilityFunctions"].resolveWait(delay);
+                if (result == 'resolved')
+                    node.type = 'checked';
+                resolve('resolved');
+            }));
         });
     }
 }
@@ -182,24 +207,35 @@ class BoardComponent {
         this.activeAlgorithm = 0;
         this.algorithmsListShowed = false;
         this.dragActive = 'false';
+        this.calculating = false;
         this.pathCalculated = false;
         this.animationsDisabled = false;
     }
     ngOnInit() {
     }
-    visualize() {
+    visualize(delay) {
+        if (this.calculating)
+            return;
         this.board.clearPath();
         if (this.pathCalculated)
             this.board.clearPath();
+        this.calculating = true;
+        let result;
         switch (this.activeAlgorithm) {
             case 0:
-                _models_algorithms_pathfinding_dijkstrasAlghorithm__WEBPACK_IMPORTED_MODULE_1__["DijkstrasAlgorithm"].calculatePath(this.board);
+                result = _models_algorithms_pathfinding_dijkstrasAlghorithm__WEBPACK_IMPORTED_MODULE_1__["DijkstrasAlgorithm"].calculatePath(this.board, delay);
                 break;
             case 1:
-                _models_algorithms_pathfinding_AStar__WEBPACK_IMPORTED_MODULE_0__["AStar"].calculatePath(this.board);
+                result = _models_algorithms_pathfinding_AStar__WEBPACK_IMPORTED_MODULE_0__["AStar"].calculatePath(this.board, delay);
                 break;
-            default: break;
+            default:
+                result = new Promise(resolve => resolve('done'));
+                break;
         }
+        result.then(value => {
+            this.calculating = false;
+            console.log(this.calculating);
+        });
         this.pathCalculated = true;
         this.animationsDisabled = true;
     }
@@ -214,7 +250,7 @@ class BoardComponent {
     toggleDiagonalEdges() {
         this.board.diagonalEdges = !this.board.diagonalEdges;
         if (this.pathCalculated)
-            this.visualize();
+            this.visualize(5);
     }
     toggleAlgoritmsList() {
         this.algorithmsListShowed = !this.algorithmsListShowed;
@@ -222,7 +258,7 @@ class BoardComponent {
     setActiveAlgorithm(index) {
         this.activeAlgorithm = index;
         if (this.pathCalculated)
-            this.visualize();
+            this.visualize(5);
     }
     contextMenuDisable(event) {
         event.preventDefault();
@@ -253,7 +289,7 @@ class BoardComponent {
                     if (node.type != 'initial') {
                         this.board.setInitialNode(node.x, node.y);
                         if (this.pathCalculated)
-                            this.visualize();
+                            this.visualize(0);
                     }
                 }
                 else
@@ -264,7 +300,7 @@ class BoardComponent {
                     if (node.type != 'destination') {
                         this.board.setDestinationNode(node.x, node.y);
                         if (this.pathCalculated)
-                            this.visualize();
+                            this.visualize(0);
                     }
                 }
                 else
@@ -299,7 +335,7 @@ BoardComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineCom
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](3, BoardComponent_div_3_Template, 2, 1, "div", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](4, "div", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function BoardComponent_Template_div_click_4_listener() { return ctx.visualize(); });
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function BoardComponent_Template_div_click_4_listener() { return ctx.visualize(5); });
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](5, "Run Algorithm");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](6, "div", 4);
@@ -362,6 +398,29 @@ BoardComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineCom
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](31);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngForOf", ctx.board.nodes);
     } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_5__["NgIf"], _angular_common__WEBPACK_IMPORTED_MODULE_5__["NgForOf"]], styles: [".alorithm-list-btn[_ngcontent-%COMP%] {\n  position: relative;\n  width: 12rem;\n}\n\n.algorithm-list[_ngcontent-%COMP%] {\n  position: absolute;\n  display: block;\n  top: 0px;\n  left: 0px;\n  transform: translate3d(0px, 38px, 0px);\n  will-change: transform;\n  width: 12rem;\n  float: left;\n  min-width: 10rem;\n  padding: 0.5rem 0;\n  margin: 0.125rem 0 0;\n  font-size: 1rem;\n  color: #b6c3cf;\n  text-align: left;\n  list-style: none;\n  background-color: #004a99;\n  background-clip: padding-box;\n  border: 1px solid rgba(0, 0, 0, 0.15);\n  border-radius: 0.25rem;\n  z-index: 1000;\n}\n\n.algorithm-list-item[_ngcontent-%COMP%] {\n  display: block;\n  width: 100%;\n  padding: 0.25rem 0.5rem;\n  clear: both;\n  font-weight: 400;\n  color: #b6c3cf;\n  text-align: inherit;\n  white-space: nowrap;\n  background-color: transparent;\n  border: 0;\n}\n\n.algorithm-list-item[_ngcontent-%COMP%]:hover {\n  color: #b6c3cf;\n  text-decoration: none;\n  background-color: #003e80;\n}\n\n.bar[_ngcontent-%COMP%] {\n  margin: auto;\n  padding: 0.5rem 0;\n  max-width: 68rem;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-flow: row wrap;\n  color: #fff;\n  text-align: center;\n}\n\n.legend-element[_ngcontent-%COMP%] {\n  width: 10rem;\n  display: flex;\n  flex-flow: column;\n  align-items: center;\n  justify-content: center;\n}\n\n.legend-tile[_ngcontent-%COMP%] {\n  padding: 0;\n  width: 1.7rem;\n  height: 1.7rem;\n  border: 1px solid #112544;\n}\n\n.legend-tile-open[_ngcontent-%COMP%] {\n  background-color: #c8d1df;\n}\n\n.legend-tile-wall[_ngcontent-%COMP%] {\n  background-color: #194485;\n}\n\n.legend-tile-initial[_ngcontent-%COMP%] {\n  background-color: #0d6319;\n}\n\n.legend-tile-destination[_ngcontent-%COMP%] {\n  background-color: #960a0a;\n}\n\n.legend-tile-checked[_ngcontent-%COMP%] {\n  background-color: #8aa3cc;\n}\n\n.legend-tile-path[_ngcontent-%COMP%] {\n  background-color: #b2e05c;\n}\n\ntable[_ngcontent-%COMP%] {\n  box-sizing: content-box;\n  border: 2px solid #0c1a30;\n  border-collapse: collapse;\n  margin: auto;\n}\n\ntd[_ngcontent-%COMP%] {\n  padding: 0;\n  width: 1.7rem;\n  height: 1.7rem;\n  border: 1px solid #112544;\n  border-collapse: collapse;\n}\n\n.node[_ngcontent-%COMP%] {\n  height: 100%;\n  width: 100%;\n  cursor: pointer;\n}\n\n.btn[_ngcontent-%COMP%] {\n  margin: 0 0.5rem;\n  display: inline-block;\n  font-weight: 400;\n  text-align: center;\n  white-space: nowrap;\n  vertical-align: middle;\n  border: 1px solid transparent;\n  padding: 0.375rem 0.75rem;\n  font-size: 1rem;\n  line-height: 1.5;\n  border-radius: 0.25rem;\n  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;\n}\n\n.btn[_ngcontent-%COMP%]:hover {\n  cursor: pointer;\n}\n\n.board-btn[_ngcontent-%COMP%] {\n  color: #fff;\n  background-color: #007bff;\n  border-color: #007bff;\n}\n\n.board-btn[_ngcontent-%COMP%]:hover {\n  color: #fff;\n  background-color: #006adb;\n  border-color: #0063cc;\n}\n\n#run-btn[_ngcontent-%COMP%] {\n  color: #fff;\n  background-color: #003e80;\n  border-color: #003e80;\n}\n\n#run-btn[_ngcontent-%COMP%]:hover {\n  color: #fff;\n  background-color: #00254d;\n  border-color: #002c5c;\n}\n\n.checkbox[_ngcontent-%COMP%] {\n  color: #fff;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uXFwuLlxcLi5cXC4uXFwuLlxcYm9hcmQuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSxrQkFBQTtFQUNBLFlBQUE7QUFDSjs7QUFFQTtFQUNJLGtCQUFBO0VBQ0EsY0FBQTtFQUNBLFFBQUE7RUFDQSxTQUFBO0VBQ0Esc0NBQUE7RUFDQSxzQkFBQTtFQUNBLFlBQUE7RUFDQSxXQUFBO0VBQ0EsZ0JBQUE7RUFDQSxpQkFBQTtFQUNBLG9CQUFBO0VBQ0EsZUFBQTtFQUNBLGNBQUE7RUFDQSxnQkFBQTtFQUNBLGdCQUFBO0VBQ0EseUJBQUE7RUFDQSw0QkFBQTtFQUNBLHFDQUFBO0VBQ0Esc0JBQUE7RUFDQSxhQUFBO0FBQ0o7O0FBRUE7RUFDSSxjQUFBO0VBQ0EsV0FBQTtFQUNBLHVCQUFBO0VBQ0EsV0FBQTtFQUNBLGdCQUFBO0VBQ0EsY0FBQTtFQUNBLG1CQUFBO0VBQ0EsbUJBQUE7RUFDQSw2QkFBQTtFQUNBLFNBQUE7QUFDSjs7QUFFQTtFQUNJLGNBQUE7RUFDQSxxQkFBQTtFQUNBLHlCQUFBO0FBQ0o7O0FBRUE7RUFDSSxZQUFBO0VBQ0EsaUJBQUE7RUFDQSxnQkFBQTtFQUNBLGFBQUE7RUFDQSxtQkFBQTtFQUNBLHVCQUFBO0VBQ0EsbUJBQUE7RUFDQSxXQUFBO0VBQ0Esa0JBQUE7QUFDSjs7QUFFQTtFQUNJLFlBQUE7RUFDQSxhQUFBO0VBQ0EsaUJBQUE7RUFDQSxtQkFBQTtFQUNBLHVCQUFBO0FBQ0o7O0FBRUE7RUFDSSxVQUFBO0VBQ0EsYUFBQTtFQUNBLGNBQUE7RUFDQSx5QkFBQTtBQUNKOztBQUVBO0VBQ0kseUJBQUE7QUFDSjs7QUFFQTtFQUNJLHlCQUFBO0FBQ0o7O0FBRUE7RUFDSSx5QkFBQTtBQUNKOztBQUVBO0VBQ0kseUJBQUE7QUFDSjs7QUFFQTtFQUNJLHlCQUFBO0FBQ0o7O0FBRUE7RUFDSSx5QkFBQTtBQUNKOztBQUVBO0VBQ0ksdUJBQUE7RUFDQSx5QkFBQTtFQUNBLHlCQUFBO0VBQ0EsWUFBQTtBQUNKOztBQUVBO0VBQ0ksVUFBQTtFQUNBLGFBQUE7RUFDQSxjQUFBO0VBQ0EseUJBQUE7RUFDQSx5QkFBQTtBQUNKOztBQUVBO0VBQ0ksWUFBQTtFQUNBLFdBQUE7RUFDQSxlQUFBO0FBQ0o7O0FBRUE7RUFDSSxnQkFBQTtFQUNBLHFCQUFBO0VBQ0EsZ0JBQUE7RUFDQSxrQkFBQTtFQUNBLG1CQUFBO0VBQ0Esc0JBQUE7RUFDQSw2QkFBQTtFQUNBLHlCQUFBO0VBQ0EsZUFBQTtFQUNBLGdCQUFBO0VBQ0Esc0JBQUE7RUFDQSxxSUFBQTtBQUNKOztBQUVBO0VBQ0ksZUFBQTtBQUNKOztBQUVBO0VBQ0ksV0FBQTtFQUNBLHlCQUFBO0VBQ0EscUJBQUE7QUFDSjs7QUFFQTtFQUNJLFdBQUE7RUFDQSx5QkFBQTtFQUNBLHFCQUFBO0FBQ0o7O0FBRUE7RUFDSSxXQUFBO0VBQ0EseUJBQUE7RUFDQSxxQkFBQTtBQUNKOztBQUVBO0VBQ0ksV0FBQTtFQUNBLHlCQUFBO0VBQ0EscUJBQUE7QUFDSjs7QUFFQTtFQUNJLFdBQUE7QUFDSiIsImZpbGUiOiJib2FyZC5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIi5hbG9yaXRobS1saXN0LWJ0biB7XHJcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XHJcbiAgICB3aWR0aDogMTJyZW07XHJcbn1cclxuXHJcbi5hbGdvcml0aG0tbGlzdCB7XHJcbiAgICBwb3NpdGlvbjogYWJzb2x1dGU7XHJcbiAgICBkaXNwbGF5OiBibG9jaztcclxuICAgIHRvcDogMHB4O1xyXG4gICAgbGVmdDogMHB4O1xyXG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGUzZCgwcHgsIDM4cHgsIDBweCk7XHJcbiAgICB3aWxsLWNoYW5nZTogdHJhbnNmb3JtO1xyXG4gICAgd2lkdGg6IDEycmVtO1xyXG4gICAgZmxvYXQ6IGxlZnQ7XHJcbiAgICBtaW4td2lkdGg6IDEwcmVtO1xyXG4gICAgcGFkZGluZzogLjVyZW0gMDtcclxuICAgIG1hcmdpbjogLjEyNXJlbSAwIDA7XHJcbiAgICBmb250LXNpemU6IDFyZW07XHJcbiAgICBjb2xvcjogI2I2YzNjZjtcclxuICAgIHRleHQtYWxpZ246IGxlZnQ7XHJcbiAgICBsaXN0LXN0eWxlOiBub25lO1xyXG4gICAgYmFja2dyb3VuZC1jb2xvcjogaHNsKDIxMSwgMTAwJSwgMzAlKTtcclxuICAgIGJhY2tncm91bmQtY2xpcDogcGFkZGluZy1ib3g7XHJcbiAgICBib3JkZXI6IDFweCBzb2xpZCByZ2JhKDAsMCwwLC4xNSk7XHJcbiAgICBib3JkZXItcmFkaXVzOiAuMjVyZW07XHJcbiAgICB6LWluZGV4OiAxMDAwO1xyXG59XHJcblxyXG4uYWxnb3JpdGhtLWxpc3QtaXRlbSB7XHJcbiAgICBkaXNwbGF5OiBibG9jaztcclxuICAgIHdpZHRoOiAxMDAlO1xyXG4gICAgcGFkZGluZzogLjI1cmVtIDAuNXJlbTtcclxuICAgIGNsZWFyOiBib3RoO1xyXG4gICAgZm9udC13ZWlnaHQ6IDQwMDtcclxuICAgIGNvbG9yOiAjYjZjM2NmO1xyXG4gICAgdGV4dC1hbGlnbjogaW5oZXJpdDtcclxuICAgIHdoaXRlLXNwYWNlOiBub3dyYXA7XHJcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiB0cmFuc3BhcmVudDtcclxuICAgIGJvcmRlcjogMDtcclxufVxyXG5cclxuLmFsZ29yaXRobS1saXN0LWl0ZW06aG92ZXIge1xyXG4gICAgY29sb3I6ICNiNmMzY2Y7XHJcbiAgICB0ZXh0LWRlY29yYXRpb246IG5vbmU7XHJcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiBoc2woMjExLCAxMDAlLCAyNSUpO1xyXG59XHJcblxyXG4uYmFyIHtcclxuICAgIG1hcmdpbjogYXV0bztcclxuICAgIHBhZGRpbmc6IDAuNXJlbSAwO1xyXG4gICAgbWF4LXdpZHRoOiA2OHJlbTtcclxuICAgIGRpc3BsYXk6IGZsZXg7XHJcbiAgICBhbGlnbi1pdGVtczogY2VudGVyO1xyXG4gICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XHJcbiAgICBmbGV4LWZsb3c6IHJvdyB3cmFwO1xyXG4gICAgY29sb3I6ICNmZmY7XHJcbiAgICB0ZXh0LWFsaWduOiBjZW50ZXI7XHJcbn1cclxuXHJcbi5sZWdlbmQtZWxlbWVudCB7XHJcbiAgICB3aWR0aDogMTByZW07XHJcbiAgICBkaXNwbGF5OiBmbGV4O1xyXG4gICAgZmxleC1mbG93OiBjb2x1bW47XHJcbiAgICBhbGlnbi1pdGVtczogY2VudGVyO1xyXG4gICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XHJcbn1cclxuXHJcbi5sZWdlbmQtdGlsZSB7XHJcbiAgICBwYWRkaW5nOiAwO1xyXG4gICAgd2lkdGg6IDEuN3JlbTtcclxuICAgIGhlaWdodDogMS43cmVtO1xyXG4gICAgYm9yZGVyOiAxcHggc29saWQgcmdiKDE3LCAzNywgNjgpO1xyXG59XHJcblxyXG4ubGVnZW5kLXRpbGUtb3BlbiB7XHJcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiByZ2IoMjAwLCAyMDksIDIyMyk7XHJcbn1cclxuXHJcbi5sZWdlbmQtdGlsZS13YWxsIHtcclxuICAgIGJhY2tncm91bmQtY29sb3I6IHJnYigyNSwgNjgsIDEzMyk7XHJcbn1cclxuXHJcbi5sZWdlbmQtdGlsZS1pbml0aWFsIHtcclxuICAgIGJhY2tncm91bmQtY29sb3I6IHJnYigxMywgOTksIDI1KTtcclxufVxyXG5cclxuLmxlZ2VuZC10aWxlLWRlc3RpbmF0aW9uIHtcclxuICAgIGJhY2tncm91bmQtY29sb3I6IHJnYigxNTAsIDEwLCAxMCk7XHJcbn1cclxuXHJcbi5sZWdlbmQtdGlsZS1jaGVja2VkIHtcclxuICAgIGJhY2tncm91bmQtY29sb3I6IHJnYigxMzgsIDE2MywgMjA0KTtcclxufVxyXG5cclxuLmxlZ2VuZC10aWxlLXBhdGgge1xyXG4gICAgYmFja2dyb3VuZC1jb2xvcjogcmdiKDE3OCwgMjI0LCA5Mik7XHJcbn1cclxuXHJcbnRhYmxlIHtcclxuICAgIGJveC1zaXppbmc6IGNvbnRlbnQtYm94O1xyXG4gICAgYm9yZGVyOiAycHggc29saWQgcmdiKDEyLCAyNiwgNDgpO1xyXG4gICAgYm9yZGVyLWNvbGxhcHNlOiBjb2xsYXBzZTtcclxuICAgIG1hcmdpbjogYXV0bztcclxufVxyXG5cclxudGQge1xyXG4gICAgcGFkZGluZzogMDtcclxuICAgIHdpZHRoOiAxLjdyZW07XHJcbiAgICBoZWlnaHQ6IDEuN3JlbTtcclxuICAgIGJvcmRlcjogMXB4IHNvbGlkIHJnYigxNywgMzcsIDY4KTtcclxuICAgIGJvcmRlci1jb2xsYXBzZTogY29sbGFwc2U7XHJcbn1cclxuXHJcbi5ub2RlIHtcclxuICAgIGhlaWdodDogMTAwJTtcclxuICAgIHdpZHRoOiAxMDAlO1xyXG4gICAgY3Vyc29yOiBwb2ludGVyO1xyXG59XHJcblxyXG4uYnRuIHtcclxuICAgIG1hcmdpbjogMCAwLjVyZW07XHJcbiAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XHJcbiAgICBmb250LXdlaWdodDogNDAwO1xyXG4gICAgdGV4dC1hbGlnbjogY2VudGVyO1xyXG4gICAgd2hpdGUtc3BhY2U6IG5vd3JhcDtcclxuICAgIHZlcnRpY2FsLWFsaWduOiBtaWRkbGU7XHJcbiAgICBib3JkZXI6IDFweCBzb2xpZCB0cmFuc3BhcmVudDtcclxuICAgIHBhZGRpbmc6IC4zNzVyZW0gLjc1cmVtO1xyXG4gICAgZm9udC1zaXplOiAxcmVtO1xyXG4gICAgbGluZS1oZWlnaHQ6IDEuNTtcclxuICAgIGJvcmRlci1yYWRpdXM6IC4yNXJlbTtcclxuICAgIHRyYW5zaXRpb246IGNvbG9yIC4xNXMgZWFzZS1pbi1vdXQsYmFja2dyb3VuZC1jb2xvciAuMTVzIGVhc2UtaW4tb3V0LGJvcmRlci1jb2xvciAuMTVzIGVhc2UtaW4tb3V0LGJveC1zaGFkb3cgLjE1cyBlYXNlLWluLW91dDtcclxufVxyXG5cclxuLmJ0bjpob3ZlciB7XHJcbiAgICBjdXJzb3I6IHBvaW50ZXI7XHJcbn1cclxuXHJcbi5ib2FyZC1idG4ge1xyXG4gICAgY29sb3I6ICNmZmY7XHJcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiBoc2woMjExLCAxMDAlLCA1MCUpO1xyXG4gICAgYm9yZGVyLWNvbG9yOiBoc2woMjExLCAxMDAlLCA1MCUpO1xyXG59XHJcblxyXG4uYm9hcmQtYnRuOmhvdmVyIHtcclxuICAgIGNvbG9yOiAjZmZmO1xyXG4gICAgYmFja2dyb3VuZC1jb2xvcjogaHNsKDIxMSwgMTAwJSwgNDMlKTtcclxuICAgIGJvcmRlci1jb2xvcjogaHNsKDIxMSwgMTAwJSwgNDAlKTtcclxufVxyXG5cclxuI3J1bi1idG4ge1xyXG4gICAgY29sb3I6ICNmZmY7XHJcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiBoc2woMjExLCAxMDAlLCAyNSUpO1xyXG4gICAgYm9yZGVyLWNvbG9yOiBoc2woMjExLCAxMDAlLCAyNSUpO1xyXG59XHJcblxyXG4jcnVuLWJ0bjpob3ZlciB7XHJcbiAgICBjb2xvcjogI2ZmZjtcclxuICAgIGJhY2tncm91bmQtY29sb3I6IGhzbCgyMTEsIDEwMCUsIDE1JSk7XHJcbiAgICBib3JkZXItY29sb3I6IGhzbCgyMTEsIDEwMCUsIDE4JSk7XHJcbn1cclxuXHJcbi5jaGVja2JveCB7XHJcbiAgICBjb2xvcjogI2ZmZjtcclxufVxyXG5cclxuXHJcbiJdfQ== */"], data: { animation: [_board_animations__WEBPACK_IMPORTED_MODULE_3__["BoardAnimations"].nodeType] } });
+
+
+/***/ }),
+
+/***/ "JKcU":
+/*!***************************************************************!*\
+  !*** ./src/app/visualizer/models/utility/UtilityFunctions.ts ***!
+  \***************************************************************/
+/*! exports provided: UtilityFunctions */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UtilityFunctions", function() { return UtilityFunctions; });
+class UtilityFunctions {
+    static resolveWait(ms) {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve('resolved');
+            }, ms);
+        });
+    }
+}
 
 
 /***/ }),
@@ -750,14 +809,18 @@ VisualizerModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineI
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AStar", function() { return AStar; });
-/* harmony import */ var _utility_PriorityQueue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../utility/PriorityQueue */ "ep2X");
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "mrSG");
+/* harmony import */ var _utility_PriorityQueue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../utility/PriorityQueue */ "ep2X");
+/* harmony import */ var _utility_UtilityFunctions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../utility/UtilityFunctions */ "JKcU");
+
+
 
 class AStar {
-    static calculatePath(board) {
+    static calculatePath(board, delay) {
         let sourceIndex = board.getNodeList().indexOf(board.getInitalNode());
         let targetIndex = board.getNodeList().indexOf(board.getDestinationNode());
         let nodes = board.getNodeList();
-        let openSet = new _utility_PriorityQueue__WEBPACK_IMPORTED_MODULE_0__["PriorityQueue"]();
+        let openSet = new _utility_PriorityQueue__WEBPACK_IMPORTED_MODULE_1__["PriorityQueue"]();
         let parents = new Array(nodes.length);
         parents[sourceIndex] = AStar.NO_PARENT;
         let gScore = new Array(nodes.length);
@@ -769,11 +832,12 @@ class AStar {
         gScore[sourceIndex] = 0;
         fScore[sourceIndex] = AStar.calculateH(nodes[sourceIndex], nodes[targetIndex]);
         openSet.add(sourceIndex, fScore[sourceIndex]);
+        let promises = [];
         while (!openSet.isEmpty()) {
             let current = openSet.dequeue();
             if (current == targetIndex) {
-                this.setPath(nodes, targetIndex, parents);
-                return fScore[current];
+                this.setPath(nodes, targetIndex, parents, 50 * delay);
+                return Promise.all(promises).then((values) => console.log(fScore[current]));
             }
             nodes.forEach(node => {
                 let edgeWeight = board.getEdgeWeight(nodes[current], node);
@@ -787,7 +851,7 @@ class AStar {
                         if (!openSet.contains(neighbour)) {
                             openSet.add(neighbour, fScore[neighbour]);
                             if (nodes[neighbour].type != 'initial' && nodes[neighbour].type != 'destination')
-                                nodes[neighbour].type = 'checked';
+                                promises.push(AStar.checkNode(nodes[neighbour], delay));
                         }
                         else {
                             openSet.remove(neighbour);
@@ -797,23 +861,38 @@ class AStar {
                 }
             });
         }
-        return 0;
+        return Promise.all(promises).then((values) => console.log(0));
     }
     static calculateH(node1, node2) {
         return Math.sqrt(Math.pow((node1.x - node2.x), 2) + Math.pow((node1.y - node2.y), 2));
     }
-    static setPath(nodes, targetIndex, parents) {
-        let list = new Array();
-        let newIndex = targetIndex;
-        while (parents[newIndex] != AStar.NO_PARENT) {
-            let node = nodes[parents[newIndex]];
-            list.push(node);
-            newIndex = parents[newIndex];
-        }
-        list.pop();
-        list = list.reverse();
-        list.forEach(element => {
-            element.type = 'path';
+    static setPath(nodes, targetIndex, parents, delay) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            let list = new Array();
+            let newIndex = targetIndex;
+            while (parents[newIndex] != AStar.NO_PARENT) {
+                let node = nodes[parents[newIndex]];
+                list.push(node);
+                newIndex = parents[newIndex];
+            }
+            list.pop();
+            list = list.reverse();
+            list.forEach((element) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+                const result = yield _utility_UtilityFunctions__WEBPACK_IMPORTED_MODULE_2__["UtilityFunctions"].resolveWait(delay);
+                if (result == 'resolved')
+                    element.type = 'path';
+            }));
+            return yield list;
+        });
+    }
+    static checkNode(node, delay) {
+        return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+            return new Promise((resolve) => Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
+                const result = yield _utility_UtilityFunctions__WEBPACK_IMPORTED_MODULE_2__["UtilityFunctions"].resolveWait(delay);
+                if (result == 'resolved')
+                    node.type = 'checked';
+                resolve('resolved');
+            }));
         });
     }
 }
