@@ -37,6 +37,9 @@ export class BoardComponent implements OnInit {
     
     this.calculating = true;
 
+    if (delay != 0)
+      this.animationsDisabled = false;
+
     let result;
     switch(this.activeAlgorithm) {
       case 0: result = DijkstrasAlgorithm.calculatePath(this.board, delay); break;
@@ -55,12 +58,14 @@ export class BoardComponent implements OnInit {
     if (this.calculating) return;
     this.board.clearBoard();
     this.pathCalculated = false;
+    this.animationsDisabled = false;
   }
 
   clearPath() {
     if (this.calculating) return;
     this.board.clearPath();
     this.pathCalculated = false;
+    this.animationsDisabled = false;
   }
 
   toggleDiagonalEdges() {
@@ -76,8 +81,11 @@ export class BoardComponent implements OnInit {
   
   setActiveAlgorithm(index: number) {
     this.activeAlgorithm = index;
-    if (this.pathCalculated)
+    
+    if (this.pathCalculated) {
+      this.algorithmsListShowed = !this.algorithmsListShowed;
       this.visualize(this.algorithmDelay);
+    }
   }
 
   contextMenuDisable(event: MouseEvent) {

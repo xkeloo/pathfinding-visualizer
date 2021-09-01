@@ -1,18 +1,18 @@
-import { style, animate, trigger, transition, state } from '@angular/animations';
+import { style, animate, trigger, transition, state, keyframes, AUTO_STYLE } from '@angular/animations';
 
 export const BoardAnimations = {
   nodeType: trigger('nodeType', [
     state('open', style({
-        backgroundColor: 'rgb(200, 209, 223)'
+        backgroundColor: 'hsl(217, 35%, 90%)'
     })),
     state('checked', style({
-        backgroundColor: 'rgb(138, 163, 204)'
+        backgroundColor: 'hsl(197, 75%, 60%)'
     })),
     state('path', style({
-        backgroundColor: 'rgb(178, 224, 92)'
+        backgroundColor: 'hsl(64, 92%, 63%)'
     })),
     state('wall', style({
-        backgroundColor: 'rgb(25, 68, 133)'
+        backgroundColor: 'hsl(216, 79%, 19%)'
     })),
     state('initial', style({
         backgroundColor: 'rgb(13, 99, 25)'
@@ -20,7 +20,7 @@ export const BoardAnimations = {
     state('destination', style({
         backgroundColor: 'rgb(150, 10, 10)'
     })),
-    /*
+    
     transition('initial <=> *', [
       animate(0)
     ]),
@@ -28,17 +28,63 @@ export const BoardAnimations = {
       animate(0)
     ]),
     transition('open => checked', [
+      animate(700, keyframes([
+        style({ 
+          borderRadius: '50%',
+          height: '50%',
+          width: '50%',
+          margin: 'auto',
+          backgroundColor: 'hsl(197, 90%, 45%)',
+          offset: 0
+        }),
+        style({ 
+          borderRadius: '40%',
+          height: '60%',
+          width: '60%',
+          margin: 'auto',
+          backgroundColor: 'hsl(197, 87%, 48%)',
+          offset: 0.3
+        }),
+        style({ 
+          borderRadius: '30%',
+          height: '70%',
+          width: '70%',
+          margin: 'auto',
+          backgroundColor: 'hsl(197, 84%, 51%)',
+          offset: 0.55
+        }),
+        style({ 
+          borderRadius: '20%',
+          height: '80%',
+          width: '80%',
+          margin: 'auto',
+          backgroundColor: 'hsl(197, 81%, 54%)',
+          offset: 0.75
+        }),
+        style({ 
+          borderRadius: '10%',
+          height: '90%',
+          width: '90%',
+          margin: 'auto',
+          backgroundColor: 'hsl(197, 77%, 57%)',
+          offset: 0.9
+        }),
+        style({ 
+          borderRadius: '0%',
+          height: '100%',
+          width: '100%',
+          margin: 'auto',
+          backgroundColor: 'hsl(197, 75%, 60%)',
+          offset: 1
+        })
+      ]))
+    ]),
+    transition('checked => path', [
       animate(500)
     ]),
-    transition('checked => *', [
-      animate(0)
+    transition('open <=> wall', [
+      animate(100)
     ]),
-    transition('path=> *', [
-      animate(0)
-    ]),
-    transition('void => *', [
-      animate(0)
-    ]),*/
     transition('* => *', [
       animate(0)
     ]),
