@@ -26,16 +26,17 @@ export class AStar {
         fScore[sourceIndex] = AStar.calculateH(nodes[sourceIndex], nodes[targetIndex]);
 
         openSet.add(sourceIndex, fScore[sourceIndex]);
+        nodes[sourceIndex].type = 'checked';
 
         while(!openSet.isEmpty()) {
             let current = openSet.dequeue();
             if (current == targetIndex) {
                 if (delay == 0) {
-                    AStar.setPath(nodes, targetIndex, parents, delay);
+                    AStar.setPath(nodes, sourceIndex, targetIndex, parents, delay);
                     return  new Promise(resolve => resolve(fScore[current]));
                 }
                 else {
-                    await AStar.setPath(nodes, targetIndex, parents, delay*5);
+                    await AStar.setPath(nodes, sourceIndex, targetIndex, parents, delay*5);
                     return  new Promise(resolve => resolve(fScore[current]));     
                 }     
             }
@@ -50,11 +51,10 @@ export class AStar {
                         fScore[neighbour] = gScore[neighbour] + AStar.calculateH(nodes[neighbour], nodes[targetIndex]);
                         if (!openSet.contains(neighbour)){
                             openSet.add(neighbour, fScore[neighbour]);
-                            if (nodes[neighbour].type != 'initial' && nodes[neighbour].type != 'destination')
-                                if (delay == 0)
-                                    nodes[neighbour].type = 'checked'
-                                else
-                                    await AStar.checkNode(nodes[neighbour], delay);
+                            if (delay == 0)
+                                nodes[neighbour].type = 'checked'
+                            else
+                                await AStar.checkNode(nodes[neighbour], delay);
                         }
                         else {
                             openSet.remove(neighbour);
@@ -72,16 +72,15 @@ export class AStar {
         return Math.sqrt(Math.pow((node1.x - node2.x),2) + Math.pow((node1.y - node2.y),2));
     }
 
-    private static async setPath(nodes: Node[], targetIndex: number, parents: number[], delay: number): Promise<Node[]> {
+    private static async setPath(nodes: Node[], sourceIndex: number, targetIndex: number, parents: number[], delay: number): Promise<Node[]> {
         let list: Node[] = new Array();
         let newIndex = targetIndex;
         while(parents[newIndex] != AStar.NO_PARENT) {
-            let node = nodes[parents[newIndex]];
-            list.push(node);
+            list.push(nodes[newIndex]);
             newIndex = parents[newIndex];
         }
 
-        list.pop();
+        list.push(nodes[sourceIndex]);
         list = list.reverse();
         if (delay == 0) {
             for (let i = 0; i < list.length; i++) {

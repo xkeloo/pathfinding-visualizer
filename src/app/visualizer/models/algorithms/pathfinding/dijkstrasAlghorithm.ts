@@ -7,7 +7,7 @@ export class DijkstrasAlgorithm {
     private static NO_PARENT: number = -1;
 
     public static async calculatePath(board: Board, delay: number): Promise<any> {
-        //constructor
+
         let sourceIndex = board.getNodeList().indexOf(board.getInitalNode());
         let targetIndex = board.getNodeList().indexOf(board.getDestinationNode());
         let nodes = board.getNodeList();
@@ -24,7 +24,7 @@ export class DijkstrasAlgorithm {
         let parents: number[] = new Array(nodes.length);
         parents[sourceIndex] = DijkstrasAlgorithm.NO_PARENT;
         
-        //async?
+
         for (let i = 0; i < nodes.length; i++) {
             let nearestNodeIndex: number = -1;
             let shortestDistance: number = Number.POSITIVE_INFINITY;
@@ -37,20 +37,19 @@ export class DijkstrasAlgorithm {
             }
 
             checked[nearestNodeIndex] = true;
-            if (nearestNodeIndex != sourceIndex && nearestNodeIndex != targetIndex) {
-                if (delay == 0)
-                    nodes[nearestNodeIndex].type = 'checked'
-                else
-                    await DijkstrasAlgorithm.checkNode(nodes[nearestNodeIndex], delay);
-            }
+            if (delay == 0)
+                nodes[nearestNodeIndex].type = 'checked'
+            else
+                await DijkstrasAlgorithm.checkNode(nodes[nearestNodeIndex], delay);
+
             if (nearestNodeIndex == targetIndex) {
                 if (delay == 0) {
-                    DijkstrasAlgorithm.setPath(nodes, targetIndex, parents, delay);
+                    DijkstrasAlgorithm.setPath(nodes, sourceIndex, targetIndex, parents, delay);
                     return  new Promise(resolve => resolve(shortestDistances[targetIndex]));
                 }
                 else 
                 {
-                    await DijkstrasAlgorithm.setPath(nodes, targetIndex, parents, delay*8);
+                    await DijkstrasAlgorithm.setPath(nodes, sourceIndex, targetIndex, parents, delay*8);
                     return new Promise(resolve => resolve(shortestDistances[targetIndex]));
                 }
             }
@@ -68,16 +67,16 @@ export class DijkstrasAlgorithm {
         return new Promise(resolve => resolve(0));
     }
 
-    private static async setPath(nodes: Node[], targetIndex: number, parents: number[], delay: number): Promise<Node[]> {
+    private static async setPath(nodes: Node[], sourceIndex: number, targetIndex: number, parents: number[], delay: number): Promise<Node[]> {
         let list: Node[] = new Array();
         let newIndex = targetIndex;
         while(parents[newIndex] != DijkstrasAlgorithm.NO_PARENT) {
-            let node = nodes[parents[newIndex]];
-            list.push(node);
+            list.push(nodes[newIndex]);
+            
             newIndex = parents[newIndex];
         }
 
-        list.pop();
+        list.push(nodes[sourceIndex]);
         list = list.reverse();
         if (delay == 0) {
             for (let i = 0; i < list.length; i++) {

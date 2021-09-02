@@ -72,27 +72,23 @@
     }
     
     .legend-tile-open {
-        background-color: hsl(217, 35%, 90%);
+        background-color: hsl(222, 37%, 88%);
     }
     
     .legend-tile-wall {
         background-color: hsl(216, 79%, 19%);
     }
-    
-    .legend-tile-initial {
-        background-color: rgb(13, 99, 25);
-    }
-    
-    .legend-tile-destination {
-        background-color: rgb(150, 10, 10);
-    }
-    
+        
     .legend-tile-checked {
         background-color: hsl(197, 75%, 60%);
     }
     
     .legend-tile-path {
         background-color: hsl(64, 92%, 63%);
+    }
+
+    .legend-tile-icons {
+        border: none;
     }
 }
 
@@ -149,19 +145,26 @@ table {
     border: 2px solid rgb(12, 26, 48);
     border-collapse: collapse;
     margin: auto;
-    background-color: hsl(217, 35%, 90%);
+    background-color: hsl(222, 37%, 88%);
     td {
         padding: 0;
         width: 1.7rem;
         height: 1.7rem;
         border-collapse: collapse;
-        border: 1px solid hsl(218, 67%, 82%);
+        
         .node {
             height: 100%;
             width: 100%;
+            margin: auto;
             cursor: pointer;
+            border: 1px solid hsl(218, 67%, 82%);
         }
     }
+}
+
+svg{
+    height: 100%;
+    width: 100%;
 }
 
 

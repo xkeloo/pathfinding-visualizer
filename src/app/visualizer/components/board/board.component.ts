@@ -96,9 +96,9 @@ export class BoardComponent implements OnInit {
     event.preventDefault();
     if (this.calculating) return;
     if(event.buttons == 1){
-      if(node.type == 'initial')
+      if(node == this.board.getInitalNode())
         this.dragActive = 'initial'
-      else if(node.type == 'destination')
+      else if(node == this.board.getDestinationNode())
         this.dragActive = 'destination'
       else if(node.type == 'open' && !this.pathCalculated) {
         node.setWall();
@@ -118,8 +118,8 @@ export class BoardComponent implements OnInit {
       case 'false': break;
 
       case 'initial': 
-        if (node.type != 'destination' && node.type != 'wall') {
-          if (node.type != 'initial') {
+        if (node != this.board.getDestinationNode() && node.type != 'wall') {
+          if (node != this.board.getInitalNode()) {
             this.board.setInitialNode(node.x, node.y);
             if (this.pathCalculated)
               this.visualize(0);
@@ -130,8 +130,8 @@ export class BoardComponent implements OnInit {
         break;
 
       case 'destination':
-        if (node.type != 'initial' && node.type != 'wall') {
-          if (node.type != 'destination') {
+        if (node != this.board.getInitalNode() && node.type != 'wall') {
+          if (node != this.board.getDestinationNode()) {
             this.board.setDestinationNode(node.x, node.y);
             if (this.pathCalculated)
               this.visualize(0)

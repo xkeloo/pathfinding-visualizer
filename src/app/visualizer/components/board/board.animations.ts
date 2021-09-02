@@ -3,30 +3,20 @@ import { style, animate, trigger, transition, state, keyframes, AUTO_STYLE } fro
 export const BoardAnimations = {
   nodeType: trigger('nodeType', [
     state('open', style({
-        backgroundColor: 'hsl(217, 35%, 90%)'
+        backgroundColor: 'hsl(222, 37%, 88%)'
     })),
     state('checked', style({
         backgroundColor: 'hsl(197, 75%, 60%)'
     })),
     state('path', style({
-        backgroundColor: 'hsl(64, 92%, 63%)'
+        backgroundColor: 'hsl(64, 92%, 63%)',
+        border: 'none'
     })),
     state('wall', style({
-        backgroundColor: 'hsl(216, 79%, 19%)'
+        backgroundColor: 'hsl(216, 79%, 19%)',
+        border: 'none'
     })),
-    state('initial', style({
-        backgroundColor: 'rgb(13, 99, 25)'
-    })),
-    state('destination', style({
-        backgroundColor: 'rgb(150, 10, 10)'
-    })),
-    
-    transition('initial <=> *', [
-      animate(0)
-    ]),
-    transition('destination <=> *', [
-      animate(0)
-    ]),
+
     transition('open => checked', [
       animate(700, keyframes([
         style({ 
@@ -80,7 +70,7 @@ export const BoardAnimations = {
       ]))
     ]),
     transition('checked => path', [
-      animate(500)
+      animate(700)
     ]),
     transition('open <=> wall', [
       animate(100)

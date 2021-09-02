@@ -1,5 +1,5 @@
 export class Node {
-    type: 'open'| 'checked' | 'path' | 'wall' | 'initial' | 'destination' = 'open';
+    type: 'open'| 'checked' | 'path' | 'wall' = 'open';
 
     constructor(public x: number, public y: number) {
 

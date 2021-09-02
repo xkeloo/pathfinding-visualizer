@@ -41,9 +41,6 @@ export class Board {
         for (let y = 0; y < this.height; y++) 
             for (let x = 0; x < this.width; x++)
                 this.nodes[y][x].type = 'open';
-
-        this.getInitalNode().type = 'initial';
-        this.getDestinationNode().type = 'destination';
     }
 
     clearPath(): void {
@@ -64,13 +61,11 @@ export class Board {
     setInitialNode(x: number, y: number) {
         this.getNode(this.initialNodeCoords.x, this.initialNodeCoords.y).type = 'open';
         this.initialNodeCoords = {x: x, y: y};
-        this.getNode(x, y).type = 'initial';
     }
 
     setDestinationNode(x: number, y: number) {
         this.getNode(this.destinationNodeCoords.x, this.destinationNodeCoords.y).type = 'open';
         this.destinationNodeCoords = {x: x, y: y};
-        this.getNode(x, y).type = 'destination';
     }
 
     getEdgeWeight(node1: Node, node2: Node): number {
