@@ -15,10 +15,6 @@
     </div>
 </div>
 <div class="bar" id="legend-bar">
-    <div class="legend-element"><div class="legend-tile legend-tile-open"></div>Open</div>
-    <div class="legend-element"><div class="legend-tile legend-tile-wall"></div>Wall</div>
-    <div class="legend-element"><div class="legend-tile legend-tile-checked"></div>Checked</div>
-    <div class="legend-element"><div class="legend-tile legend-tile-path"></div>Path</div>
     <div class="legend-element">
         <div class="legend-tile legend-tile-icons">
             <svg class="svg-node" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16">
@@ -36,6 +32,10 @@
         </div>
         Destination Node
     </div>
+    <div class="legend-element"><div class="legend-tile legend-tile-open"></div>Open Node</div>
+    <div class="legend-element"><div class="legend-tile legend-tile-wall"></div>Wall Node</div>
+    <div class="legend-element"><div class="legend-tile legend-tile-checked"></div>Checked Node</div>
+    <div class="legend-element"><div class="legend-tile legend-tile-path"></div>Path Node</div>
 </div>
 
 <table (mouseleave)="onMouseLeave()" (contextmenu)="contextMenuDisable($event)">

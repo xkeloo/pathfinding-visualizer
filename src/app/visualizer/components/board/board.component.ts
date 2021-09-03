@@ -22,7 +22,7 @@ export class BoardComponent implements OnInit {
   calculating: boolean = false;
   pathCalculated: boolean = false;
   animationsDisabled: boolean = false;
-  algorithmDelay: number = 1;
+  algorithmDelay: number = 2;
 
   constructor() { }
 
@@ -100,7 +100,7 @@ export class BoardComponent implements OnInit {
         this.dragActive = 'initial'
       else if(node == this.board.getDestinationNode())
         this.dragActive = 'destination'
-      else if(node.type == 'open' && !this.pathCalculated) {
+      else if(node.type == 'open' && this.board.getInitalNode() != node && this.board.getDestinationNode() != node && !this.pathCalculated) {
         node.setWall();
         this.dragActive = "block";
       }
@@ -142,7 +142,7 @@ export class BoardComponent implements OnInit {
         break;
 
       case 'block':
-        if (event.buttons == 1 && node.type == 'open')
+        if (event.buttons == 1 && node.type == 'open' && this.board.getInitalNode() != node && this.board.getDestinationNode() != node)
           node.setWall();
         break;
         

@@ -36,7 +36,7 @@ export class AStar {
                     return  new Promise(resolve => resolve(fScore[current]));
                 }
                 else {
-                    await AStar.setPath(nodes, sourceIndex, targetIndex, parents, delay*5);
+                    await AStar.setPath(nodes, sourceIndex, targetIndex, parents, delay*8);
                     return  new Promise(resolve => resolve(fScore[current]));     
                 }     
             }
