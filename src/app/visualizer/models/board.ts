@@ -10,7 +10,7 @@ export class Board {
         for (let y = 0; y < this.height; y++) {
             this.nodes[y] = [];
             for (let x = 0; x < this.width; x++) {
-                this.nodes[y][x] = new Node(x, y);
+                this.nodes[y][x] = new Node(x, y, 'open');
             }
         }
 
@@ -21,8 +21,6 @@ export class Board {
 
         this.setInitialNode(this.initialNodeCoords.x, this.initialNodeCoords.y);
         this.setDestinationNode(this.destinationNodeCoords.x, this.destinationNodeCoords.y);
-
-
     }
     
     getNode(x: number, y: number): Node {
@@ -30,11 +28,17 @@ export class Board {
     }
 
     getNodeList(): Node[] {
-        let list: Node[] = new Array() 
+        let list: Node[] = new Array();
         for (let y = 0; y < this.height; y++) 
             for (let x = 0; x < this.width; x++) 
                 list.push(this.nodes[y][x]);
         return list;
+    }
+
+    setNodeList(list: Node[]): void {
+        for (let y = this.height-1; y >= 0; y--) 
+            for (let x = this.width-1; x >= 0; x--) 
+                this.nodes[y][x] = list.pop()!;
     }
 
     clearBoard(): void {
@@ -84,5 +88,18 @@ export class Board {
         return 0;
     }
 
+    getNeighbours(node: Node): Node[] {
+        let nodeList: Node[] = new Array();
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                let n_x = node.x + j;
+                let n_y = node.y + i;
+
+                if (!(i == 0 && j == 0) && !(n_x < 0 || n_y < 0 || n_x >= this.width || n_y >= this.height))
+                    nodeList.push(this.getNode(n_x, n_y));
+            }
+        }
+        return nodeList;
+    }
     
 }

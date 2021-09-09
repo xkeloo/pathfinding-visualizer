@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AStar } from '../../models/algorithms/pathfinding/AStar';
 import { DijkstrasAlgorithm } from '../../models/algorithms/pathfinding/dijkstrasAlghorithm';
+import { CellularAutomata } from '../../models/algorithms/procedural-generation/cellular-automata/CellularAutomata';
 import { Board } from '../../models/board';
 import { Node } from '../../models/node';
 import { BoardAnimations } from './board.animations';
@@ -13,7 +14,7 @@ import { BoardAnimations } from './board.animations';
   animations: [BoardAnimations.nodeType]
 })
 export class BoardComponent implements OnInit {
-  board = new Board(40, 17);
+  board = new Board(45, 18);
 
   algorithms: string[] = new Array("Dijsktra's algorithm", "A* algorithm");
   activeAlgorithm: number = 0;
@@ -50,7 +51,6 @@ export class BoardComponent implements OnInit {
       this.calculating = false
       this.pathCalculated = true;
       this.animationsDisabled = true;
-      console.log(this.calculating)
     });
   }
 
@@ -66,6 +66,11 @@ export class BoardComponent implements OnInit {
     this.board.clearPath();
     this.pathCalculated = false;
     this.animationsDisabled = false;
+  }
+
+  generateStructures() {
+    if (this.calculating || this.pathCalculated) return;
+    CellularAutomata.generateMap(this.board);
   }
 
   toggleDiagonalEdges() {

@@ -1,0 +1,1 @@
+{"version":3,"sources":["./styles.scss"],"names":[],"mappings":"AAAA;EACE;EACA;EACA;EAAc;AAEhB;;AACA;EACA;EACA;AAEA,C","file":"styles.css","sourcesContent":["html, body { \n  display: inline;\n  margin: 0;\n  height: 100%; width: 100%;\n}\n\n* {\nbox-sizing: border-box;\nfont-family: Verdana, Geneva, Tahoma, sans-serif;\n}"],"sourceRoot":"webpack:///"}

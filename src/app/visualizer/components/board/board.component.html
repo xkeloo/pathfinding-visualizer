@@ -1,4 +1,5 @@
 <div class="bar" id="nav-bar">
+    <div (click)="generateStructures()" class="btn board-btn">Generate Walls</div>
     <div (click)="toggleAlgoritmsList()" class="btn board-btn alorithm-list-btn">{{algorithms[activeAlgorithm]}}
         <div class="algorithm-list" *ngIf="algorithmsListShowed">
             <div class="algorithm-list-item"(click)="setActiveAlgorithm(i)" *ngFor="let algorithm of algorithms; index as i">
@@ -59,5 +60,6 @@
 
 <div class="bar">
     Right mouse button - place wall : Left mouse button - clear wall <br>
+    (Blocks cannot be placed nor cleared while the path is calculated) <br>
     Initial and Destination nodes can be moved using right mouse button
 </div>

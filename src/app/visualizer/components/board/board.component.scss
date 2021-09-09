@@ -14,6 +14,22 @@
         width: 12rem;
     }
 
+    .alorithm-list-btn::after {
+        position: absolute;
+        top: 50%;
+        right: 2%;
+        display: inline-block;
+        margin-left: 0.25em;
+        vertical-align: 0.25em;
+        content: "";
+        border-top: .3em solid;
+        border-right: .3em solid transparent;
+        border-bottom: 0;
+        border-left: .3em solid transparent;
+    }
+    
+
+
     .algorithm-list {
         position: absolute;
         display: block;
@@ -24,7 +40,7 @@
         width: 12rem;
         float: left;
         min-width: 10rem;
-        padding: .5rem 0;
+        padding: .6rem 0;
         margin: .125rem 0 0;
         font-size: 1rem;
         color: #b6c3cf;

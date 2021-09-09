@@ -40,7 +40,8 @@ export class AStar {
                     return  new Promise(resolve => resolve(fScore[current]));     
                 }     
             }
-            nodes.forEach(async node => {
+            let neighbours = board.getNeighbours(nodes[current]);
+            neighbours.forEach(async node => {
                 let edgeWeight: number = board.getEdgeWeight(nodes[current], node);
                 if (edgeWeight != 0) {
                     let neighbour = nodes.indexOf(node);

@@ -54,14 +54,17 @@ export class DijkstrasAlgorithm {
                 }
             }
 
-            for (let i = 0; i < nodes.length; i++) {
-                let edgeWeight: number = board.getEdgeWeight(nodes[nearestNodeIndex], nodes[i]);
-
-                if (edgeWeight > 0 && ((shortestDistance + edgeWeight) < shortestDistances[i])) {
-                    parents[i] = nearestNodeIndex;
-                    shortestDistances[i] = shortestDistance + edgeWeight;
+            let neighbours = board.getNeighbours(nodes[nearestNodeIndex]);
+            neighbours.forEach(neighbour => {
+                let index = nodes.indexOf(neighbour);
+                let edgeWeight: number = board.getEdgeWeight(nodes[nearestNodeIndex], neighbour);
+                if ((edgeWeight > 0 && (shortestDistance + edgeWeight) < shortestDistances[index])) {
+                    parents[index] = nearestNodeIndex;
+                    shortestDistances[index] = shortestDistance + edgeWeight;
                 }
-            }
+            });
+
+            
         }
 
         return new Promise(resolve => resolve(0));
