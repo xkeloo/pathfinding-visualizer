@@ -157,7 +157,6 @@
 
 
 table {
-    box-sizing: content-box;
     border: 2px solid rgb(12, 26, 48);
     border-collapse: collapse;
     margin: auto;
@@ -180,7 +179,7 @@ table {
 
 svg{
     height: 100%;
-    width: 100%;
+    width: auto;
 }
 
 

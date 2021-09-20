@@ -18,7 +18,7 @@
 <div class="bar" id="legend-bar">
     <div class="legend-element">
         <div class="legend-tile legend-tile-icons">
-            <svg class="svg-node" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16">
             <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
             </svg>
         </div>
@@ -26,7 +26,7 @@
     </div>
     <div class="legend-element">
         <div class="legend-tile legend-tile-icons">
-            <svg class="svg-node" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stop-circle" viewBox="0 0 16 16">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stop-circle" viewBox="0 0 16 16">
                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                 <path d="M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
             </svg>
@@ -45,10 +45,10 @@
             <div class="node" [@.disabled]="animationsDisabled" [@nodeType]="node.type"   
             (mousedown)="onMouseDown($event, node)" (mousemove)="onMouseMove($event, node)" (mouseup)="onMouseUp($event, node)">
 
-            <svg class="svg-node" *ngIf="node.x == board.getInitalNode().x && node.y == board.getInitalNode().y" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16">
+            <svg *ngIf="node.x == board.getInitalNode().x && node.y == board.getInitalNode().y" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
             </svg>
-            <svg class="svg-node" *ngIf="node.x == board.getDestinationNode().x && node.y == board.getDestinationNode().y" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stop-circle" viewBox="0 0 16 16">
+            <svg *ngIf="node.x == board.getDestinationNode().x && node.y == board.getDestinationNode().y" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stop-circle" viewBox="0 0 16 16">
                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
                 <path d="M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
             </svg>
